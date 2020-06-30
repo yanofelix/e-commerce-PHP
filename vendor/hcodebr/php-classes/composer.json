@@ -1,0 +1,22 @@
+{
+    "name": "hcodebr/php-classes",
+    "minimum-stability": "dev",
+    "type": "library",
+    "description": "Classes PHP",
+    "homepage": "https://github.com/yanofelix/php-classes",
+    "authors": [
+        {
+            "name": "BOzo",
+            "email": "suporte@bozo.com.br"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "rain/raintpl":"3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "src"
+        }
+    }
+}
