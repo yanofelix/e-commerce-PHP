@@ -28,8 +28,7 @@
 
 				$_SESSION[User::SESSION] = $user->getValues();
 
-				var_dump($user);
-				exit;
+				return $user;
 
 			}
 			else{
