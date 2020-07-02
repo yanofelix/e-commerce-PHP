@@ -3,9 +3,12 @@
 	namespace Hcode\Model;
 	use \Hcode\DB\Sql;
 	use \Hcode\Model;
+	use \Hcode\Mailer;
 
 	class User extends Model {
-		CONST SESSION = "User";
+		const SESSION = "User";
+		const SECRET = "abcdefghijklmnop";
+		const SECRET_IV = "HcodePhp7_Secret_IV";
 
 		public static function login($login, $password){
 
@@ -120,6 +123,70 @@
        		 $sql->query("CALL sp_users_delete(:iduser)", array(
        		 	":iduser"=>$this->getiduser()
 			));
+
+		}
+
+		public static function getForgot($email, $inadmin = true){
+
+			$sql = new Sql();
+
+			$result = $sql->select("
+				SELECT * 
+				FROM tb_persons a 
+				INNER JOIN tb_users b USING(idperson) 
+				WHERE a.desemail = :email;",
+				array(
+					"email"=>$email
+				));
+
+			if(count($result) ===0){
+				throw new \Exception("Erro ao recuperar a senha.");
+				
+			}
+			else{
+
+				$data = $result[0];
+
+				$result2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :desip)", array(
+					":iduser"=>$data['iduser'],
+					":desip"=>$_SERVER['REMOTE_ADDR']
+				));
+
+				if(count($result2)===0){
+					throw new \Exception("Erro ao recuperar a senha.");
+				}
+				else{
+
+					$dataRecovery = $result2[0];
+
+					$code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
+
+					$code = base64_encode($code);
+
+
+					if ($inadmin === true) {
+
+						$link = "https://alwayshigh.com.br/admin/forgot/reset?code=$code";
+
+					} else {
+
+						$link = "https://alwayshigh.com.br/admin/forgot/reset?code=$code";
+						
+					}				
+
+					$mailer = new Mailer($data['desemail'], $data['desperson'], "Redefinir Senha", "forgot",
+					array(
+						"name"=>$data["desperson"],
+						"link"=>$link
+					));
+
+					$mailer->send();
+
+					return $link;
+
+				}
+
+			}
 
 		}
 
