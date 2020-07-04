@@ -166,11 +166,11 @@
 
 					if ($inadmin === true) {
 
-						$link = "https://alwayshigh.com.br/admin/forgot/reset?code=$code";
+						$link = "https://www.alwayshigh.com.br/admin/forgot/reset?code=$code";
 
 					} else {
 
-						$link = "https://alwayshigh.com.br/forgot/reset?code=$code";
+						$link = "https://www.alwayshigh.com.br/forgot/reset?code=$code";
 						
 					}				
 
@@ -234,7 +234,7 @@
 
 		}
 
-		public function setPassword($newPassword){
+		public function setPassword($password){
 
 			$sql = new Sql();	
 
