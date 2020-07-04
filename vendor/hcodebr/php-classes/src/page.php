@@ -43,7 +43,8 @@
 			}
 		}
 
-		public function setTpl($name, $data=[], $returnHtml = false){
+		public function setTpl($name, $data=array(), $returnHtml = false){
+			
 			$this->setData($data);
 
 			return $this->tpl->draw($name, $returnHtml);

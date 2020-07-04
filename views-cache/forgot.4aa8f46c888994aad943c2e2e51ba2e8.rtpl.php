@@ -384,7 +384,7 @@
           <div class="content">
             <span class="brand">
               <a href="#">
-                Hcode Store
+                Leide de Lima Doces
               </a>
             </span>
           </div>

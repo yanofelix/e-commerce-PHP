@@ -1,14 +1,19 @@
 <?php
 	
 	namespace Hcode\Model;
+
 	use \Hcode\DB\Sql;
 	use \Hcode\Model;
 	use \Hcode\Mailer;
 
 	class User extends Model {
+
 		const SESSION = "User";
-		const SECRET = "abcdefghijklmnop";
+		const SECRET = "HcodePhp7_Secret";
 		const SECRET_IV = "HcodePhp7_Secret_IV";
+		const ERROR = "UserError";
+		const ERROR_REGISTER = "UserErrorRegister";
+		const SUCCESS = "UserSucesss";
 
 		public static function login($login, $password){
 
@@ -130,17 +135,12 @@
 
 			$sql = new Sql();
 
-			$result = $sql->select("
-				SELECT * 
-				FROM tb_persons a 
-				INNER JOIN tb_users b USING(idperson) 
-				WHERE a.desemail = :email;",
-				array(
-					"email"=>$email
+			$result = $sql->select("SELECT * FROM tb_persons a INNER JOIN tb_users b USING (idperson) WHERE a.desemail = :email;", array(
+					":email"=>$email
 				));
 
 			if(count($result) ===0){
-				throw new \Exception("Erro ao recuperar a senha.");
+				throw new \Exception("Estorou aqui.");
 				
 			}
 			else{
@@ -170,7 +170,7 @@
 
 					} else {
 
-						$link = "https://alwayshigh.com.br/admin/forgot/reset?code=$code";
+						$link = "https://alwayshigh.com.br/forgot/reset?code=$code";
 						
 					}				
 
@@ -187,6 +187,61 @@
 				}
 
 			}
+
+		}
+
+
+		public static function validForgotDecrypt($code){	
+
+			$code = base64_decode($code);
+
+			$idrecovery = openssl_decrypt($code, 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
+
+			$sql = new Sql();
+
+			$result = $sql->select("
+					SELECT *
+				FROM tb_userspasswordsrecoveries a
+				INNER JOIN tb_users b USING(iduser)
+				INNER JOIN tb_persons c USING(idperson)
+				WHERE
+					a.idrecovery = :idrecovery
+					AND
+					a.dtrecovery IS NULL
+					AND
+					DATE_ADD(a.dtregister, INTERVAL 1 HOUR) >= NOW();
+			", array(
+				":idrecovery"=>$idrecovery
+		));
+
+			if(count ($result) === 0){
+
+				throw new \Exception("Erro ao gerar recovery key");
+
+			}
+
+			return $result[0];
+
+		}
+
+		public static function setForgotUsed($idrecovery){
+
+			$sql = new Sql();
+
+			$sql->query("UPDATE tb_userspasswordsrecoveries SET dtrecovery = NOW() WHERE idrecovery= :idrecovery", array(
+				":idrecovery"=>$idrecovery
+			));
+
+		}
+
+		public function setPassword($newPassword){
+
+			$sql = new Sql();	
+
+			$sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser ", array(
+				":password"=>$password,
+				":iduser"=>$this->getiduser()
+			));
 
 		}
 

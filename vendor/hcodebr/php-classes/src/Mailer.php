@@ -2,48 +2,52 @@
 	
 namespace Hcode;
 
-
 use Rain\Tpl;
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 
 class Mailer{
 	const USERNAME = "yyanfelix@gmail.com";
-	const PASSWORD = "86316296br";
+	const PASSWORD = "557285br";
 	const NAME_FROM = "Leite de lima";
 
 	private $mail;
 
 	public function __construct($toAddress, $toName, $subject, $tplName, $data = array())
 	{
+
+
 		$config = array(
 					"tpl_dir"       => $_SERVER['DOCUMENT_ROOT']."/views/email/",
 					"cache_dir"     => $_SERVER['DOCUMENT_ROOT']."/views-cache/",
 					"debug"         => false // set to false to improve the speed
 				   );
 
-		Tpl::configure( $config );
+			Tpl::configure( $config );
 
-		$tpl = new Tpl;
+			$tpl = new Tpl;
 
-		foreach ($data as $key => $value) {
-			$tpl->assign($key, $value);
-		}
+			foreach ($data as $key => $value) {
+				$tpl->assign($key, $value);
+			}
 
-		$html = $tpl->draw($tplName, true);
+			$html = $tpl->draw($tplName, true);
 
-		
 
-		$this->mail = new \PHPMailer;
+
+		//Create a new PHPMailer instance
+		$this->mail = new PHPMailer();
 
 		//Tell PHPMailer to use SMTP
-		$this->mail->isSMTP();
 
+		$this->mail->isSMTP();
 		$this->mail->SMTPOptions = array(
-	   		'ssl' => array(
-	        'verify_peer' => false,
-	        'verify_peer_name' => false,
-	        'allow_self_signed' => true
-  		  ));
+		    'ssl' => array(
+		    'verify_peer' => false,
+		    'verify_peer_name' => false,
+		    'allow_self_signed' => true
+		    )
+		);
 
 		//Enable SMTP debugging
 		// SMTP::DEBUG_OFF = off (for production use)
@@ -76,7 +80,7 @@ class Mailer{
 		$this->mail->setFrom(Mailer::USERNAME, Mailer::NAME_FROM);
 
 		//Set an alternative reply-to address
-		$this->mail->addReplyTo('replyto@example.com', 'First Last');
+		//$this->mail->addReplyTo('replyto@example.com', 'First Last');
 
 		//Set who the message is to be sent to
 		$this->mail->addAddress($toAddress, $toName);
@@ -89,10 +93,10 @@ class Mailer{
 		$this->mail->msgHTML($html);
 
 		//Replace the plain text body with one created manually
-		$this->mail->AltBody = 'This is a plain-text message body';
+		$this->mail->AltBody = 'NADA PRA NADA';   
 
 		//Attach an image file
-		$this->mail->addAttachment('images/phpmailer_mini.png');
+		//$mail->addAttachment('images/phpmailer_mini.png');
 
 		//send the message, check for errors
 		
@@ -115,10 +119,14 @@ class Mailer{
 
 		    return $result;
 		}
+
+		
 	}
 
 	public function send(){
+
 		return $this->mail->send();
+
 	}
 
 
