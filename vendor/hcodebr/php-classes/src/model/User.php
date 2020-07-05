@@ -200,28 +200,23 @@
 			$sql = new Sql();
 
 			$result = $sql->select("
-					SELECT *
-				FROM tb_userspasswordsrecoveries a
+				SELECT * from tb_userspasswordsrecoveries a
 				INNER JOIN tb_users b USING(iduser)
 				INNER JOIN tb_persons c USING(idperson)
-				WHERE
-					a.idrecovery = :idrecovery
-					AND
-					a.dtrecovery IS NULL
-					AND
-					DATE_ADD(a.dtregister, INTERVAL 1 HOUR) >= NOW();
-			", array(
-				":idrecovery"=>$idrecovery
-		));
+				WHERE a.idrecovery = :idrecovery AND a.dtrecovery is NULL AND DATE_ADD(a.dtregister, INTERVAL 1 HOUR) >= NOW()
+				", array(
+					":idrecovery"=>$idrecovery
+			));
 
-			if(count ($result) === 0){
+			if(count($result) === 0){
 
 				throw new \Exception("Erro ao gerar recovery key");
 
 			}
+			else {
 
-			return $result[0];
-
+				return $result[0];
+			}
 		}
 
 		public static function setForgotUsed($idrecovery){
@@ -242,6 +237,15 @@
 				":password"=>$password,
 				":iduser"=>$this->getiduser()
 			));
+
+		}
+
+		public static function getPasswordHash($password)
+		{
+
+			return password_hash($password, PASSWORD_DEFAULT, [
+				'cost'=>12
+			]);
 
 		}
 
