@@ -30,11 +30,7 @@
                     <div class="footer-menu">
                         <h2 class="footer-wid-title">Categorias</h2>
                         <ul>
-                            <li><a href="#">Categoria Um</a></li>
-                            <li><a href="#">Categoria Dois</a></li>
-                            <li><a href="#">Categoria Três</a></li>
-                            <li><a href="#">Categoria Quarto</a></li>
-                            <li><a href="#">Categoria Cinco</a></li>
+                            <?php require $this->checkTemplate("categories-menu");?>
                         </ul>                        
                     </div>
                 </div>
@@ -60,7 +56,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="copyright">
-                        <p>&copy; 2017 Hcode Treinamentos. <a href="http://www.hcode.com.br" target="_blank">hcode.com.br</a></p>
+                        <p>&copy; 2020 Yan Oliveira Felix. <a href="https://github.com/yanofelix" target="_blank">github.com.br</a></p>
                     </div>
                 </div>
                 
