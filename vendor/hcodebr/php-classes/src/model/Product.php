@@ -1,5 +1,5 @@
 <?php
-	
+
 	namespace Hcode\Model;
 
 	use \Hcode\DB\Sql;
@@ -56,6 +56,70 @@
 			));
 
 			Category::updateFile();
+
+		}
+
+		public function checkPhoto(){
+
+			if(file_exists(
+				$_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
+				"template" . DIRECTORY_SEPARATOR.
+				"site" . DIRECTORY_SEPARATOR . 
+				"img" . DIRECTORY_SEPARATOR .
+				"products". DIRECTORY_SEPARATOR.
+				$this->getidproduct() . ".jpg"
+			)) {
+				$url = "/template/site/img/products/" . $this->getidproduct(). ".jpg";
+			}
+			else{
+				$url = "template/site/img/product.jpg";
+			}
+
+			return $this->setdesphoto($url);
+
+		}
+
+		public function getValues(){
+
+		$this->checkPhoto();
+
+		$values =	parent::getValues();
+
+		return $values;
+
+		}
+
+		public function setPhoto($file){
+
+			$extension = explode(".", $file['name']);
+			$extension = end($extension);
+
+			switch ($extension) {
+				case 'jpg':
+				case 'jpeg':
+					$image = imagecreatefromjpeg($file["tmp_name"]);
+					break;
+				case 'gif':
+					$image = imagecreatefromgif($file["tmp_name"]);
+					break;
+				case 'png':
+					$image = imagecreatefrompng($file["tmp_name"]);
+					break;
+						
+			}
+
+			$dist = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
+				"template" . DIRECTORY_SEPARATOR.
+				"site" . DIRECTORY_SEPARATOR . 
+				"img" . DIRECTORY_SEPARATOR .
+				"products". DIRECTORY_SEPARATOR.
+				$this->getidproduct() . ".jpg";
+
+				imagejpeg($image, $dist);
+
+				imagedestroy($image);
+
+				$this->checkPhoto();
 
 		}
 
