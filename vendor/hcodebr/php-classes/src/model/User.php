@@ -41,7 +41,7 @@
 			}
 			else{
 
-				if($inadmin== true && (bool)$_SESSION[User::SESSION]['inadmin'] === true){
+				if($inadmin === true && (bool)$_SESSION[User::SESSION]['inadmin'] === true){
 					return true;
 				}
 				else if($inadmin === false){
@@ -87,7 +87,7 @@
 
 		public static function verifyLogin($inadmin = true){
 			
-			if(User::checkLogin($inadmin)){
+			if(!User::checkLogin($inadmin)){
 
 				header("Location: /admin/login");
 				exit;
