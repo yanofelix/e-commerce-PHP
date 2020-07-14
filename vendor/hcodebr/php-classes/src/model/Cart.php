@@ -84,9 +84,11 @@
 			$result = $sql->select("SELECT * FROM tb_carts WHERE idcart = :idcart", [
 				':idcart'=>$idcart
 			]);
+			if (count($result) > 0) {
 
-			$this->setData($result[0]);
+				$this->setData($result[0]);
 
+			}
 		}
 
 		public function save(){
