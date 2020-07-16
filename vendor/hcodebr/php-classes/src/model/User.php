@@ -64,17 +64,21 @@
 
 			$sql = new Sql();
 
-			$result = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", array(
-				":LOGIN"=>$login
-			));
+			$result = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b ON a.idperson = b.idperson WHERE a.deslogin = :LOGIN", array(
+			":LOGIN"=>$login
+			)); 
 
-			if (count($result) === 0) {
-				throw new \Exception ("Usuario invalido/Senha invalida", 1);
+			if (count($result) === 0){
+				throw new \Exception("Usuário inexistente ou senha inválida.");
 			}
 
 			$data = $result[0];
 
-			if (password_verify($password, $data['despassword']) === true){
+			//essa porra só da false
+
+
+			if (password_verify($password, $data["despassword"]) === true){
+
 				$user = new User();
 
 				$data['desperson'] = utf8_encode($data['desperson']);
@@ -85,9 +89,9 @@
 
 				return $user;
 
-			}
-			else{
-				throw new \Exception ("Usuario invalido/Senha invalida", 1);
+			} 
+			else {
+				throw new \Exception("Usuário inexistente ou senha inválida.");
 			}
 
 		}
@@ -123,15 +127,15 @@
 
 			$sql = new Sql();
 
-			$result = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)",
-				array(
-					":desperson"=>utf8_decode($this->getdesperson()),
-					":deslogin"=>$this->getdeslogin(),
-					":despassword"=>User::getPasswordHash($this->getdespassword()),
-					":desemail"=>$this->getdesemail(),
-					":nrphone"=>$this->getnrphone(),
-					":inadmin"=>$this->getinadmin()
-				));
+			$result = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
+				":desperson"=>utf8_decode($this->getdesperson()),
+				":deslogin"=>$this->getdeslogin(),
+				":despassword"=>User::getPasswordHash($this->getdespassword()),
+				":desemail"=>$this->getdesemail(),
+				":nrphone"=>$this->getnrphone(),
+				":inadmin"=>$this->getinadmin()
+			));
+
 			$this->setData($result[0]);
 
 		}
@@ -140,13 +144,15 @@
 
 			$sql = new Sql();
 
-			$result = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING (idperson) WHERE a.iduser = :iduser", array(
+			$result = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser", array(
 				":iduser"=>$iduser
 			));
 
+			$data = $result[0];
+
 			$data['desperson'] = utf8_encode($data['desperson']);
 
-			$this->setData($result[0]);
+			$this->setData($data);
 
 		}
 
@@ -154,18 +160,18 @@
 
 			$sql = new Sql();
 
-			$result = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)",
-				array(
-					":iduser"=>$this->getiduser(),
-					":desperson"=>utf8_decode($this->getdesperson()),
-					":deslogin"=>$this->getdeslogin(),
-					":despassword"=>User::getPasswordHash($this->getdespassword()),
-					":desemail"=>$this->getdesemail(),
-					":nrphone"=>$this->getnrphone(),
-					":inadmin"=>$this->getinadmin()
-				));
-			$this->setData($result[0]);
-		}
+			$result = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
+				":iduser"=>$this->getiduser(),
+				":desperson"=>utf8_decode($this->getdesperson()),
+				":deslogin"=>$this->getdeslogin(),
+				":despassword"=>User::getPasswordHash($this->getdespassword()),
+				":desemail"=>$this->getdesemail(),
+				":nrphone"=>$this->getnrphone(),
+				":inadmin"=>$this->getinadmin()
+			));
+
+			$this->setData($result[0]);	
+		}	
 
 		public function delete(){
 
@@ -286,13 +292,12 @@
 
 		}
 
-		public static function getPasswordHash($password)
-		{
+		public static function getPasswordHash($password)	{
 
 			return password_hash($password, PASSWORD_DEFAULT, [
-				'cost'=>12
-			]);
-
+			'cost'=>12
+		]);
+			
 		}
 
 		public static function setError($msg){
