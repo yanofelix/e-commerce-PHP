@@ -218,11 +218,11 @@
 
 					if ($inadmin === true) {
 
-						$link = "https://www.alwayshigh.com.br/admin/forgot/reset?code=$code";
+						$link = "https://www.leitedelima.com.br/admin/forgot/reset?code=$code";
 
 					} else {
 
-						$link = "https://www.alwayshigh.com.br/forgot/reset?code=$code";
+						$link = "https://www.leitedelima.com.br/forgot/reset?code=$code";
 						
 					}				
 
@@ -275,8 +275,8 @@
 
 			$sql = new Sql();
 
-			$sql->query("UPDATE tb_userspasswordsrecoveries SET dtrecovery = NOW() WHERE idrecovery= :idrecovery", array(
-				":idrecovery"=>$idrecovery
+			$sql->query("UPDATE tb_userspasswordsrecoveries SET dtrecovery = NOW() WHERE idrecovery = :idrecovery", array(
+			":idrecovery"=>$idrecovery
 			));
 
 		}
@@ -285,9 +285,9 @@
 
 			$sql = new Sql();	
 
-			$sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser ", array(
-				":password"=>$password,
-				":iduser"=>$this->getiduser()
+			$sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser", array(
+			":password"=>$password,
+			":iduser"=>$this->getiduser()
 			));
 
 		}
@@ -353,6 +353,28 @@
 			]);
 
 			return(count($result) > 0);
+
+		}
+
+		public static function setSuccess($msg){
+
+			$_SESSION[User::SUCCESS] = $msg;
+
+		}
+
+		public static function getSuccess(){
+
+			$msg = (isset($_SESSION[User::SUCCESS]) && $_SESSION[User::SUCCESS]) ? $_SESSION[User::SUCCESS] : '';
+
+			User::clearError();
+
+			return $msg;
+
+		}
+
+		public static function clearSuccess(){
+
+			$_SESSION[User::SUCCESS] = NULL;
 
 		}
 
